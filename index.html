@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!--
+      CSP（モバイル仕様 §12 / D-9）
+
+      ⚠️ **接続キーを localStorage に置く設計なので、スクリプト注入が一発で
+         「全作品の読み書き権限の漏洩」になる。** 通信先を GitHub に限っても、
+         注入されたスクリプトが GitHub へ送るのは止められない。本質は
+         **読み込めるスクリプトの出所を自サイトに限ること**。
+
+      ⚠️ **E2E のために緩めないこと。** 緩めた CSP が本番に漏れる。
+         API の差し替えは Playwright の `page.route()` で行う（§12.1）。
+
+      ℹ️ `frame-ancestors` は meta では効かないため、**配信側のヘッダで付ける**
+         必要がある（`public/_headers`）。ここに書いてあるのは
+         二重の網であって、ヘッダの代わりではない。
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://api.github.com; object-src 'none'; base-uri 'none'"
+    />
+    <!--
+      ホーム画面に追加できるようにする（モバイル仕様 §12 / T3-6）。
+
+      ℹ️ iOS は `manifest` の `display` を見ないので、`apple-*` の指定も要る。
+         ⚠️ **アイコンは `public/icons/`。** 作り直すときは `tools/icon-gen/`。
+    -->
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#fbfaf7" />
+    <link rel="icon" href="./icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="novel-backup" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>novel-backup</title>
+    <script type="module" crossorigin src="./assets/index-CBmm1GEE.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BACYpvzU.css">
+  </head>
+  <body>
+    <div id="app"></div>
+  </body>
+</html>

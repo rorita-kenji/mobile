@@ -1,0 +1,40 @@
+# 配信するときに付けるヘッダ（モバイル仕様 §12 / T3-6）。
+#
+# ⚠️ ★**いまの配信先（GitHub Pages）では、このファイルは効かない。**
+#    読むのは Cloudflare Pages と Netlify だけである。
+#    **配信先は GitHub Pages に決まった**（2026-08-12・利用者の判断）ので、
+#    ここに書いてあるヘッダは**どれも付かない**。残してあるのは
+#    「本来どう固めたいか」の記録と、配信先を移したときのためである。
+#
+#    ⚠️ **付かないぶんの手当て**（モバイル仕様 §12）:
+#      - `frame-ancestors` → **画面の側で受け持つ**（`src/lib/embed.ts`。
+#        埋め込まれていたら画面を作らない／`UT-M-EMBED-001` `002`）
+#      - `Cache-Control`   → GitHub Pages は既定で `max-age=600`。
+#        **新しい版には最大10分で気づく**（付かなくても止まらない）
+#      - それ以外の CSP    → `index.html` の `<meta>` に入っている（`frame-ancestors` を除く）
+#
+# ⚠️ **E2E のために緩めないこと。** 緩めた CSP が本番に漏れる。
+#    API の差し替えは Playwright の `page.route()` で行う（§12.1）。
+
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src https://api.github.com; object-src 'none'; base-uri 'none'; frame-ancestors 'none'
+
+# ハッシュの付いたものだけ長期キャッシュ。**それ以外は毎回確かめる**
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/
+  Cache-Control: no-cache
+
+/index.html
+  Cache-Control: no-cache
+
+# ⚠️ **ここを長期キャッシュにしない。** 新しい版に気づけなくなる
+/service-worker.js
+  Cache-Control: no-cache
+
+/manifest.webmanifest
+  Cache-Control: no-cache
+
+/icons/*
+  Cache-Control: no-cache
